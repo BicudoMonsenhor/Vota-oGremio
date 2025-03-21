@@ -128,14 +128,17 @@
         <p>Resultados da Votação:</p>
         <div id="resultadosVotacao"></div>
         <button class="button delete-button" onclick="deletarResultados()">Deletar Resultados</button>
+        <button class="button" onclick="baixarResultados()">Baixar Resultados em TXT</button>
     </div>
 </div>
 
-<audio id="votacaoSom" src="som-voto.mp3" preload="auto"></audio> <!-- Adicione seu arquivo de som aqui -->
+<audio id="votacaoSom" src="urna.wav" preload="auto"></audio> <!-- Adicione seu arquivo de som aqui -->
 
 <script>
     const correctPassword = "123";  // Defina sua senha aqui
-    let votos = {
+
+    // Tente carregar os votos salvos no localStorage, se existirem
+    let votos = JSON.parse(localStorage.getItem('votos')) || {
         "Ação Jovem": 0,
         "Chapa da Evolução": 0,
         "Chapa que faz a diferença": 0,
@@ -145,8 +148,14 @@
         "Os Vencedores": 0
     };
 
+    // Função para salvar os votos no localStorage
+    function salvarVotos() {
+        localStorage.setItem('votos', JSON.stringify(votos));
+    }
+
     function votar(chapa) {
         votos[chapa]++;
+        salvarVotos();  // Salva os votos após cada voto
         const votoSom = document.getElementById('votacaoSom');
         votoSom.play();  // Toca o som toda vez que um voto é registrado
         alert("Você votou em " + chapa);
@@ -185,11 +194,31 @@
             "Os Vencedores": 0
         };
 
+        // Salva os votos resetados
+        salvarVotos();
+
         // Ocultando os resultados
         const resultDiv = document.getElementById('result');
         resultDiv.style.display = 'none';
         
         alert("Os resultados foram deletados!");
+    }
+
+    function baixarResultados() {
+        const totalVotos = Object.values(votos).reduce((a, b) => a + b, 0);
+        let resultadosTexto = "Resultados da Votação:\n\n";
+
+        for (let chapa in votos) {
+            const porcentagem = totalVotos === 0 ? 0 : ((votos[chapa] / totalVotos) * 100).toFixed(2);
+            resultadosTexto += `${chapa}: ${porcentagem}%\n`;
+        }
+
+        // Criando o arquivo de texto e iniciando o download
+        const blob = new Blob([resultadosTexto], { type: 'text/plain' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'resultados_votacao.txt';
+        link.click();
     }
 </script>
 
