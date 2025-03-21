@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Votação</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            text-align: center;
+        }
+        .chapas img {
+            width: 180px;
+            height: auto;
+            margin: 10px;
+            border-radius: 10px;
+            transition: transform 0.3s ease-in-out;
+        }
+        .chapas img:hover {
+            transform: scale(1.1);
+        }
+        .chapas {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            justify-items: center;
+        }
+        .chapa {
+            text-align: center;
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+        .password-container {
+            margin-top: 40px;
+        }
+        .result {
+            margin-top: 30px;
+            display: none;
+            font-size: 18px;
+            font-weight: bold;
+            color: green;
+        }
+        .result p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Sistema de Votação - Chapas</h1>
+
+    <div class="chapas">
+        <div class="chapa">
+            <img src="açãojovem.jpg" alt="Ação Jovem">
+            <p>Ação Jovem 21</p>
+            <button class="button" onclick="votar('Ação Jovem')">Votar</button>
+        </div>
+        <div class="chapa">
+            <img src="chapa da evolução.jpg" alt="Chapa da Evolução">
+            <p>Chapa da Evolução 42</p>
+            <button class="button" onclick="votar('Chapa da Evolução')">Votar</button>
+        </div>
+        <div class="chapa">
+            <img src="chapaquefazdiferença.jpg" alt="Chapa que faz a diferença">
+            <p>Chapa que faz a diferença 52</p>
+            <button class="button" onclick="votar('Chapa que faz a diferença')">Votar</button>
+        </div>
+        <div class="chapa">
+            <img src="destinocriativo.jpg" alt="Destino Criativo">
+            <p>Destino Criativo 74</p>
+            <button class="button" onclick="votar('Destino Criativo')">Votar</button>
+        </div>
+        <div class="chapa">
+            <img src="futuroem ação.jpg" alt="Futuro em Ação">
+            <p>Futuro em Ação 33</p>
+            <button class="button" onclick="votar('Futuro em Ação')">Votar</button>
+        </div>
+        <div class="chapa">
+            <img src="NewSchool.jpg" alt="A New School">
+            <p>A New School 63</p>
+            <button class="button" onclick="votar('A New School')">Votar</button>
+        </div>
+        <div class="chapa">
+            <img src="os vencedores.jpg" alt="Os Vencedores">
+            <p>Os Vencedores 11</p>
+            <button class="button" onclick="votar('Os Vencedores')">Votar</button>
+        </div>
+    </div>
+
+    <div class="password-container">
+        <label for="password">Digite a senha para ver os resultados:</label>
+        <input type="password" id="password" placeholder="Senha">
+        <button class="button" onclick="verResultados()">Ver Resultados</button>
+    </div>
+
+    <div class="result" id="result">
+        <p>Resultados da Votação:</p>
+        <div id="resultadosVotacao"></div>
+    </div>
+</div>
+
+<audio id="votacaoSom" src="urna.wav" preload="auto"></audio> <!-- Adicione seu arquivo de som aqui -->
+
+<script>
+    const correctPassword = "123";  // Defina sua senha aqui
+    let votos = {
+        "Ação Jovem": 0,
+        "Chapa da Evolução": 0,
+        "Chapa que faz a diferença": 0,
+        "Destino Criativo": 0,
+        "Futuro em Ação": 0,
+        "A New School": 0,
+        "Os Vencedores": 0
+    };
+
+    function votar(chapa) {
+        votos[chapa]++;
+        const votoSom = document.getElementById('votacaoSom');
+        votoSom.play();  // Toca o som toda vez que um voto é registrado
+        alert("Você votou em " + chapa);
+    }
+
+    function verResultados() {
+        const passwordInput = document.getElementById('password').value;
+        const resultDiv = document.getElementById('result');
+        const resultadosDiv = document.getElementById('resultadosVotacao');
+
+        if (passwordInput === correctPassword) {
+            const totalVotos = Object.values(votos).reduce((a, b) => a + b, 0);
+            let resultadosHTML = "";
+            
+            for (let chapa in votos) {
+                const porcentagem = ((votos[chapa] / totalVotos) * 100).toFixed(2);
+                resultadosHTML += `<p>${chapa}: ${porcentagem}%</p>`;
+            }
+
+            resultadosDiv.innerHTML = resultadosHTML;
+            resultDiv.style.display = 'block';
+        } else {
+            alert("Senha incorreta!");
+        }
+    }
+</script>
+
+</body>
+</html>
